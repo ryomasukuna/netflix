@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -19,8 +20,8 @@ public class Movie extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Schema(description = "UUID Primary key (Unique identifier for the movie)", example = "f47ac10b-58cc-4372-a567-0e02b2c3d479")
-    @Column(name = "id", unique = true, nullable = false)
-    private UUID id;
+    @Column(name = "movie_id", unique = true, nullable = false)
+    private UUID movieId;
 
     @Schema(description = "Title of the movie", example = "Inception")
     @Column(name = "title", length = 255, nullable = false)
@@ -79,21 +80,46 @@ public class Movie extends AbstractEntity {
     @Column(name = "metacritic_score", precision = 3, scale = 1)
     private double metacriticScore;
 
-    @Schema(description = "Foreign key to director (crew table)", example = "1")
-    @Column(name = "director_id")
-    private long directorId;
+    @ManyToOne
+    @JoinColumn(name = "director_id", referencedColumnName = "id")
+    @Schema(description = "Foreign key to director", example = "1")
+    private Director director;
 
     @Schema(description = "Foreign key to production companies", example = "1")
     @Column(name = "production_company_id")
     private long productionCompanyId;
 
+    @OneToMany(mappedBy = "movie")
     @Schema(description = "Foreign key to main genre", example = "1")
-    @Column(name = "main_genre_id")
-    private long mainGenreId;
+    @JoinTable(
+            name = "movie_actors",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private List<Actor> actor;
+
+    @ManyToOne
+    @JoinColumn(name = "main_actor_id", referencedColumnName = "id")
+    @Schema(description = "Foreign key to the main actor", example = "1")
+    private Actor mainActor;
 
     @Schema(description = "Age certification (e.g., PG, 12A, R18)", example = "PG-13")
     @Column(name = "age_certification", length = 10)
     private String ageCertification;
+
+    @ElementCollection
+    @CollectionTable(name = "series_trailers", joinColumns = @JoinColumn(name = "series_id"))
+    @Column(name = "trailer_url")
+    @Schema(description = "List of trailer URLs for the series.", example = "[\"https://example.com/trailer1.mp4\", \"https://example.com/trailer2.mp4\"]")
+    private List<String> trailers;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Schema(description = "List of posters associated with the movie.")
+    private List<Poster> posters;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    @Schema(description = "List of carousel images associated with the movie.")
+    private List<CarouselImage> carouselImages;
 
     @Schema(description = "Whether the movie has won any awards", example = "true")
     @Column(name = "has_won_awards")
@@ -114,5 +140,14 @@ public class Movie extends AbstractEntity {
     @Schema(description = "Whether the movie is available in 4K", example = "true")
     @Column(name = "4k_available")
     private boolean fourKAvailable;
+
+    @OneToMany(mappedBy = "movie")
+    @JoinTable(
+            name = "movie_genres",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    @Schema(description = "List of genres associated with this movie")
+    private List<Genre> genres;
 
 }
