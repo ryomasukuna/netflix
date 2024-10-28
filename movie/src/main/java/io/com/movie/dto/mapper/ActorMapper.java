@@ -14,8 +14,6 @@ import org.mapstruct.factory.Mappers;
 public interface ActorMapper {
     ActorMapper INSTANCE = Mappers.getMapper(ActorMapper.class);
 
-    @Mapping(target = "actorId", ignore = true)
     Actor toEntity(ActorRequest requestDTO);
-
     ActorResponse toResponseDTO(Actor entity);
 }

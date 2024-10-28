@@ -11,8 +11,6 @@ import org.mapstruct.factory.Mappers;
 public interface MovieMapper {
     MovieMapper INSTANCE = Mappers.getMapper(MovieMapper.class);
 
-    @Mapping(target = "movieId", ignore = true)
     Movie toEntity(MovieRequest requestDTO);
-
     MovieResponse toResponseDTO(Movie entity);
 }

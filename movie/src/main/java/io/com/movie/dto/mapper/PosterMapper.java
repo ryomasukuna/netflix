@@ -10,9 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface PosterMapper {
     PosterMapper INSTANCE = Mappers.getMapper(PosterMapper.class);
 
-    @Mapping(target = "posterId", ignore = true)
     Poster toEntity(PosterRequest requestDTO);
-
     PosterResponse toResponseDTO(Poster entity);
 
 }

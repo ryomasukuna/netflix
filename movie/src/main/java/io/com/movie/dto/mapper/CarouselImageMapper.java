@@ -12,9 +12,7 @@ public interface CarouselImageMapper {
 
     CarouselImageMapper INSTANCE = Mappers.getMapper(CarouselImageMapper.class);
 
-    @Mapping(target = "carouselImageId", ignore = true)  // Ignore auto-generated ID
     CarouselImage toEntity(CarouselImageRequest requestDTO);
-
     CarouselImageResponse toResponseDTO(CarouselImage entity);
 
 }

@@ -1,10 +1,14 @@
 package io.com.movie.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.com.movie.model.enums.Gender;
+import io.com.movie.utils.ValidatorEnumClass;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "director")
+@Table(name = "movie_director")
 public class Director {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +31,14 @@ public class Director {
     @Schema(description = "Biography of the director", example = "Christopher Nolan is a British-American film director...")
     @Column(name = "biography", columnDefinition = "TEXT")
     private String biography;
+
+    @Schema(description = "Biography of the actor", example = "Leonardo Wilhelm DiCaprio is an American actor...")
+    @Column(name = "gender")
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @ValidatorEnumClass(enumClass = Gender.class, message = "Invalid Gender, must be any of {value}", name = "gender")
+    private Gender gender;
+
 
     @Schema(description = "Date of birth of the director", example = "1970-07-30")
     @Column(name = "date_of_birth")

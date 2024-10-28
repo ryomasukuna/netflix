@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -59,13 +61,10 @@ public class MovieResponse {
     private double metacriticScore;
 
     @Schema(description = "Foreign key to director (crew table)", example = "1")
-    private long directorId;
+    private UUID directorId;
 
     @Schema(description = "Foreign key to production companies", example = "1")
     private long productionCompanyId;
-
-    @Schema(description = "Foreign key to main genre", example = "1")
-    private long mainGenreId;
 
     @Schema(description = "Age certification (e.g., PG, 12A, R18)", example = "PG-13")
     private String ageCertification;
@@ -85,4 +84,7 @@ public class MovieResponse {
     @Schema(description = "Whether the movie is available in 4K", example = "true")
     private boolean fourKAvailable;
 
+    private Set<UUID> actorIds;
+
+    private List<UUID> genreIds;
 }

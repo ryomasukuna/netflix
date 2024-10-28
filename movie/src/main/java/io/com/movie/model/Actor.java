@@ -1,17 +1,22 @@
 package io.com.movie.model;
 
+import io.com.movie.model.enums.Gender;
+import io.com.movie.utils.ValidatorEnumClass;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "actor")
+@Table(name = "movie_actor")
 public class Actor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +30,13 @@ public class Actor {
     @Schema(description = "Biography of the actor", example = "Leonardo Wilhelm DiCaprio is an American actor...")
     @Column(name = "biography", columnDefinition = "TEXT")
     private String biography;
+
+    @Schema(description = "Biography of the actor", example = "Leonardo Wilhelm DiCaprio is an American actor...")
+    @Column(name = "gender")
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @ValidatorEnumClass(enumClass = Gender.class, message = "Invalid Gender, must be any of {value}", name = "gender")
+    private Gender gender;
 
     @Schema(description = "Date of birth of the actor", example = "1974-11-11")
     @Column(name = "date_of_birth")
@@ -40,13 +52,10 @@ public class Actor {
     private String country;
 
     @ManyToMany(mappedBy = "actors")
-    private List<Movie> movies;
+    private Set<Movie> movies;
 
     @ManyToMany(mappedBy = "actors")
-    private List<Series> series;
+    private Set<Series> series;
 
-    @ManyToOne
-    @JoinColumn(name = "movie_id")
-    private Movie movie;
 
 }

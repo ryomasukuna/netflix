@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "poster")
+@Table(name = "movie_poster")
 @Schema(description = "Represents a Poster image entity.")
 public class Poster extends AbstractEntity {
     @Id
@@ -18,23 +18,23 @@ public class Poster extends AbstractEntity {
     @Schema(description = "Unique identifier of the poster image.", example = "1", required = true)
     private Long posterId;
 
-
     @Schema(description = "URL of the poster image.", example = "https://example.com/poster.jpg", required = true)
     private String imageUrl;
 
     @ManyToOne
-    @JoinColumn(name = "series_id")
     @Schema(description = "The series this poster belongs to.")
     private Series series;
 
     @ManyToOne
-    @JoinColumn(name = "season_id")
     @Schema(description = "The season this poster belongs to.")
     private Season season;
 
     @ManyToOne
-    @JoinColumn(name = "episode_id")
     @Schema(description = "The episode this poster belongs to.")
     private Episode episode;
+
+    @ManyToOne
+    @Schema(description = "The movie this poster belongs to.")
+    private Movie movie;
 
 }

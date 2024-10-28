@@ -11,8 +11,6 @@ import org.mapstruct.factory.Mappers;
 public interface SeriesMapper {
     SeriesMapper INSTANCE = Mappers.getMapper(SeriesMapper.class);
 
-    @Mapping(target = "seriesId", ignore = true)
     Series toEntity(SeriesRequest requestDTO);
-
     SeriesResponse toResponseDTO(Series entity);
 }

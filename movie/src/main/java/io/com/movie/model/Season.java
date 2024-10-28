@@ -12,18 +12,19 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "season_series")
+@Table(name = "movie_season_series")
 public class Season extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Unique identifier of the season.", example = "1", required = true)
     @Column(name = "season_id")
-    private Long seasonId;
+    private UUID seasonId;
 
     @ManyToOne
     @JoinColumn(name = "series_id", nullable = false)
@@ -51,24 +52,6 @@ public class Season extends AbstractEntity {
     @Schema(description = "Number of episodes in the season.", example = "13")
     private Integer totalEpisodes;
 
-    @ElementCollection
-    @CollectionTable(name = "season_trailers", joinColumns = @JoinColumn(name = "season_id"))
-    @Column(name = "trailer_url")
-    @Schema(description = "List of trailer URLs for the season.", example = "[\"https://example.com/trailer1.mp4\", \"https://example.com/trailer2.mp4\"]")
-    private List<String> trailers;
-
-    @OneToMany(mappedBy = "season", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Schema(description = "List of posters associated with the season.")
-    private List<Poster> posters;
-
-    @OneToMany(mappedBy = "season", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Schema(description = "List of carousel images associated with the season.")
-    private List<CarouselImage> carouselImages;
-
-    @OneToMany(mappedBy = "season")
-    @Schema(description = "List of episodes in this season.")
-    private List<Episode> episodes;
-
     @Schema(description = "Whether the season has won awards.", example = "true")
     private boolean hasWonAwards;
 
@@ -78,5 +61,18 @@ public class Season extends AbstractEntity {
     @Schema(description = "Whether the season is an original production for the platform.", example = "false")
     private boolean isOriginal;
 
+    @ElementCollection
+    @CollectionTable(name = "movie_season_trailers", joinColumns = @JoinColumn(name = "season_id"))
+    @Column(name = "trailer_url")
+    @Schema(description = "List of trailer URLs for the season.", example = "[\"https://example.com/trailer1.mp4\", \"https://example.com/trailer2.mp4\"]")
+    private List<String> trailers;
+
+    @OneToMany(mappedBy = "season", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Schema(description = "List of posters associated with the season.")
+    private List<Poster> posters;
+
+    @OneToMany(mappedBy = "season")
+    @Schema(description = "List of episodes in this season.")
+    private List<Episode> episodes;
 
 }

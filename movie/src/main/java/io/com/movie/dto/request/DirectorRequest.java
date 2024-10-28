@@ -2,13 +2,15 @@ package io.com.movie.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DirectorRequest {
     @Schema(description = "Name of the director", example = "Christopher Nolan")
     private String name;

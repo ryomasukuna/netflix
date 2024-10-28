@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "genre")
+@Table(name = "movie_genre")
 public class Genre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,21 +25,11 @@ public class Genre {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @ManyToMany
-    @JoinTable(
-            name = "movie_genres",
-            joinColumns = @JoinColumn(name = "genre_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id")
-    )
+    @ManyToMany(mappedBy = "genres")
     @Schema(description = "List of movies associated with this genre")
     private List<Movie> movies;
 
-    @ManyToMany
-    @JoinTable(
-            name = "series_genres",
-            joinColumns = @JoinColumn(name = "genre_id"),
-            inverseJoinColumns = @JoinColumn(name = "series_id")
-    )
+    @ManyToMany(mappedBy = "genres")
     @Schema(description = "List of series associated with this genre")
     private List<Series> series;
 

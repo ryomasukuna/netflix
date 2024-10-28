@@ -23,7 +23,6 @@ public abstract class AbstractEntity implements Serializable {
 
     @CreatedDate
     @Column(name = "created_at", length = 50)
-    @Temporal(TemporalType.TIMESTAMP)
     protected LocalDate createdAt;
 
     @LastModifiedBy
@@ -32,7 +31,6 @@ public abstract class AbstractEntity implements Serializable {
 
     @LastModifiedDate
     @Column(name = "updated_at", length = 50)
-    @Temporal(TemporalType.TIMESTAMP)
     protected LocalDate updatedAt;
 
     @Column(name = "deleted")

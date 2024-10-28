@@ -10,8 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface SeasonMapper {
     SeasonMapper INSTANCE = Mappers.getMapper(SeasonMapper.class);
 
-    @Mapping(target = "seasonId", ignore = true)
     Season toEntity(SeasonRequest requestDTO);
-
     SeasonResponse toResponseDTO(Season entity);
 }

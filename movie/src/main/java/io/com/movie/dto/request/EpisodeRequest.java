@@ -1,14 +1,16 @@
 package io.com.movie.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
-@Getter
-@Setter
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EpisodeRequest {
 
     @Schema(description = "ID of the season", example = "1")

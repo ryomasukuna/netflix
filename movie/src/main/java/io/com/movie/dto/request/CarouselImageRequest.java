@@ -1,15 +1,16 @@
 package io.com.movie.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Value;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-@Getter
-@Setter
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CarouselImageRequest {
 
     @Schema(description = "URL of the carousel image", example = "https://example.com/image.jpg")

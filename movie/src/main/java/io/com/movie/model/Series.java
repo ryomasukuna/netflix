@@ -10,14 +10,16 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "series")
+@Table(name = "movie_series")
 @Schema(description = "Represents a TV Series entity.")
 public class Series extends AbstractEntity {
 
@@ -57,6 +59,14 @@ public class Series extends AbstractEntity {
     @Schema(description = "Rating of the series (e.g., TV-MA, TV-PG).", example = "TV-MA")
     private String rating;
 
+    @Schema(description = "Rotten Tomatoes score (0-100 scale)", example = "87.5")
+    @Column(name = "rotten_tomatoes_score", precision = 3, scale = 1)
+    private BigDecimal rottenTomatoesScore;
+
+    @Schema(description = "Metacritic score (0-100 scale)", example = "74.2")
+    @Column(name = "metacritic_score", precision = 3, scale = 1)
+    private BigDecimal metacriticScore;
+
     @NotBlank
     @Schema(description = "Original language of the series.", example = "English", required = true)
     private String language;
@@ -69,26 +79,30 @@ public class Series extends AbstractEntity {
     @Column(name = "age_certification", length = 10)
     private String ageCertification;
 
-    @OneToMany(mappedBy = "movie")
-    @Schema(description = "Foreign key to main genre", example = "1")
-    @JoinTable(
-            name = "movie_actors",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "actor_id")
-    )
-    private List<Actor> actor;
+    @Schema(description = "Whether the series has won awards.", example = "true")
+    private boolean hasWonAwards;
+
+    @Schema(description = "Number of awards the series has won.", example = "5")
+    private Integer awardCount;
+
+    @Schema(description = "Whether the series is an original production for the platform.", example = "false")
+    private boolean isOriginal;
+
+    @Schema(description = "Whether the series is released on a weekly basis.", example = "true")
+    private boolean weeklyRelease;
 
     @ManyToOne
+    @JoinColumn(name = "director_id")
     @Schema(description = "Foreign key to director (crew table)", example = "1")
     private Director director;
 
     @Schema(description = "Foreign key to main genre", example = "1")
     @ManyToOne
-    @JoinColumn(name = "main_actor_id", referencedColumnName = "id")
+    @JoinColumn(name = "main_actor_id")
     private Actor mainActor;
 
     @ElementCollection
-    @CollectionTable(name = "series_trailers", joinColumns = @JoinColumn(name = "series_id"))
+    @CollectionTable(name = "movie_series_trailers", joinColumns = @JoinColumn(name = "series_id"))
     @Column(name = "trailer_url")
     @Schema(description = "List of trailer URLs for the series.", example = "[\"https://example.com/trailer1.mp4\", \"https://example.com/trailer2.mp4\"]")
     private List<String> trailers;
@@ -105,19 +119,21 @@ public class Series extends AbstractEntity {
     @Schema(description = "List of seasons that belong to this series.")
     private List<Season> seasons;
 
-    @Schema(description = "Whether the series has won awards.", example = "true")
-    private boolean hasWonAwards;
+    @ManyToMany
+    @Schema(description = "Foreign key to main actor", example = "1")
+    @JoinTable(
+            name = "movie_series_actors_relationship",
+            joinColumns = @JoinColumn(name = "series_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private Set<Actor> actors;
 
-    @Schema(description = "Number of awards the series has won.", example = "5")
-    private Integer awardCount;
-
-    @Schema(description = "Whether the series is an original production for the platform.", example = "false")
-    private boolean isOriginal;
-
-    @Schema(description = "Whether the series is released on a weekly basis.", example = "true")
-    private boolean weeklyRelease;
-
-    @ManyToMany(mappedBy = "series")
+    @ManyToMany
+    @JoinTable(
+            name = "movie_series_genres_relationship",
+            joinColumns = @JoinColumn(name = "genre_id"),
+            inverseJoinColumns = @JoinColumn(name = "series_id")
+    )
     @Schema(description = "List of genres associated with this series")
     private List<Genre> genres;
 

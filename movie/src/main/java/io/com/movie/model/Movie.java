@@ -1,19 +1,31 @@
 package io.com.movie.model;
 
 import io.com.movie.model.common.AbstractEntity;
+import io.com.movie.model.enums.AgeCertification;
+import io.com.movie.utils.ValidatorEnumClass;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
+
+@Entity
+@Table(name = "movie_movies")
+@Data
+@Builder
+@NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "movies")
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Schema(description = "Represents a movie entity.")
 public class Movie extends AbstractEntity {
 
@@ -23,35 +35,45 @@ public class Movie extends AbstractEntity {
     @Column(name = "movie_id", unique = true, nullable = false)
     private UUID movieId;
 
+    @NotNull
+    @Size(min = 1, max = 255)
     @Schema(description = "Title of the movie", example = "Inception")
-    @Column(name = "title", length = 255, nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
+    @Lob
     @Schema(description = "A synopsis or overview of the movie plot", example = "A skilled thief is offered a chance to have his past crimes forgiven...")
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @PastOrPresent
     @Schema(description = "The release date of the movie", example = "2010-07-16")
     @Column(name = "release_date")
     @Temporal(TemporalType.DATE)
     private LocalDate releaseDate;
 
+    @Min(1)
     @Schema(description = "Duration of the movie in minutes", example = "148")
     @Column(name = "runtime_minutes")
     private int runtimeMinutes;
 
+    @DecimalMin(value = "0.0", inclusive = false, message = "Rating must be between 0 and 10")
+    @DecimalMax(value = "10.0", inclusive = true, message = "Rating must be between 0 and 10")
     @Schema(description = "Movie rating (e.g., PG, PG-13, R)", example = "PG-13")
-    @Column(name = "rating", length = 10)
-    private String rating;
+    @Column(name = "rating", precision = 5, scale = 2)
+    private BigDecimal rating;
 
+    @Size(max = 50)
     @Schema(description = "Original language of the movie", example = "English")
     @Column(name = "language", length = 50)
     private String language;
 
+    @Size(max = 100)
     @Schema(description = "Country where the movie was produced", example = "USA")
     @Column(name = "country", length = 100)
     private String country;
 
+    @Min(0)
     @Schema(description = "Budget in USD", example = "160000000")
     @Column(name = "budget")
     private long budget;
@@ -68,58 +90,27 @@ public class Movie extends AbstractEntity {
     @Column(name = "trailer_url", length = 500)
     private String trailerUrl;
 
+    @Size(max = 20)
     @Schema(description = "Reference to IMDb ID for external linkage", example = "tt1375666")
     @Column(name = "imdb_id", length = 20)
     private String imdbId;
 
+    @DecimalMin(value = "0.0", inclusive = true)
+    @DecimalMax(value = "100.0", inclusive = true)
     @Schema(description = "Rotten Tomatoes score (0-100 scale)", example = "87.5")
     @Column(name = "rotten_tomatoes_score", precision = 3, scale = 1)
-    private double rottenTomatoesScore;
+    private BigDecimal rottenTomatoesScore;
 
+    @DecimalMin(value = "0.0", inclusive = true)
+    @DecimalMax(value = "100.0", inclusive = true)
     @Schema(description = "Metacritic score (0-100 scale)", example = "74.2")
     @Column(name = "metacritic_score", precision = 3, scale = 1)
-    private double metacriticScore;
-
-    @ManyToOne
-    @JoinColumn(name = "director_id", referencedColumnName = "id")
-    @Schema(description = "Foreign key to director", example = "1")
-    private Director director;
-
-    @Schema(description = "Foreign key to production companies", example = "1")
-    @Column(name = "production_company_id")
-    private long productionCompanyId;
-
-    @OneToMany(mappedBy = "movie")
-    @Schema(description = "Foreign key to main genre", example = "1")
-    @JoinTable(
-            name = "movie_actors",
-            joinColumns = @JoinColumn(name = "movie_id"),
-            inverseJoinColumns = @JoinColumn(name = "actor_id")
-    )
-    private List<Actor> actor;
-
-    @ManyToOne
-    @JoinColumn(name = "main_actor_id", referencedColumnName = "id")
-    @Schema(description = "Foreign key to the main actor", example = "1")
-    private Actor mainActor;
+    private BigDecimal metacriticScore;
 
     @Schema(description = "Age certification (e.g., PG, 12A, R18)", example = "PG-13")
     @Column(name = "age_certification", length = 10)
-    private String ageCertification;
-
-    @ElementCollection
-    @CollectionTable(name = "series_trailers", joinColumns = @JoinColumn(name = "series_id"))
-    @Column(name = "trailer_url")
-    @Schema(description = "List of trailer URLs for the series.", example = "[\"https://example.com/trailer1.mp4\", \"https://example.com/trailer2.mp4\"]")
-    private List<String> trailers;
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Schema(description = "List of posters associated with the movie.")
-    private List<Poster> posters;
-
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    @Schema(description = "List of carousel images associated with the movie.")
-    private List<CarouselImage> carouselImages;
+    @ValidatorEnumClass(enumClass = AgeCertification.class, message = "Invalid Age Certification, must be any of {value}", name = "ageCertification")
+    private AgeCertification ageCertification;
 
     @Schema(description = "Whether the movie has won any awards", example = "true")
     @Column(name = "has_won_awards")
@@ -141,9 +132,42 @@ public class Movie extends AbstractEntity {
     @Column(name = "4k_available")
     private boolean fourKAvailable;
 
-    @OneToMany(mappedBy = "movie")
+    @ManyToOne
+    @JoinColumn(name = "director_id")
+    @Schema(description = "Foreign key to director", example = "1")
+    private Director director;
+
+    @ManyToOne
+    @JoinColumn(name = "main_actor_id")
+    @Schema(description = "Foreign key to the main actor", example = "1")
+    private Actor mainActor;
+
+    @ElementCollection
+    @CollectionTable(name = "movie_series_trailers", joinColumns = @JoinColumn(name = "series_id"))
+    @Column(name = "trailer_url")
+    @Schema(description = "List of trailer URLs for the series.", example = "[\"https://example.com/trailer1.mp4\", \"https://example.com/trailer2.mp4\"]")
+    private List<String> trailers;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Schema(description = "List of posters associated with the movie.")
+    private List<Poster> posters;
+
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
+    @Schema(description = "List of carousel images associated with the movie.")
+    private List<CarouselImage> carouselImages;
+
+    @ManyToMany
     @JoinTable(
-            name = "movie_genres",
+            name = "movie_actor_relationship",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    @Schema(description = "Foreign key to main genre", example = "1")
+    private Set<Actor> actors;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_genres_relationship",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )

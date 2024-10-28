@@ -11,8 +11,6 @@ import org.mapstruct.factory.Mappers;
 public interface DirectorMapper {
     DirectorMapper INSTANCE = Mappers.getMapper(DirectorMapper.class);
 
-    @Mapping(target = "directorId", ignore = true)
     Director toEntity(DirectorRequest requestDTO);
-
     DirectorResponse toResponseDTO(Director entity);
 }

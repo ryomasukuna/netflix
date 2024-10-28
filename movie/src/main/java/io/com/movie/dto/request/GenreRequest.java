@@ -1,14 +1,17 @@
 package io.com.movie.dto.request;
 
 import io.com.movie.dto.response.MovieResponse;
+import io.com.movie.dto.response.SeriesResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class GenreRequest {
     @Schema(description = "UUID Primary key (Unique identifier for the genre)", example = "1")
     private Long genreId;

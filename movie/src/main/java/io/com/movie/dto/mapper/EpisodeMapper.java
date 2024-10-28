@@ -11,8 +11,6 @@ import org.mapstruct.factory.Mappers;
 public interface EpisodeMapper {
     EpisodeMapper INSTANCE = Mappers.getMapper(EpisodeMapper.class);
 
-    @Mapping(target = "episodeId", ignore = true)
     Episode toEntity(EpisodeRequest requestDTO);
-
     EpisodeResponse toResponseDTO(Episode entity);
 }

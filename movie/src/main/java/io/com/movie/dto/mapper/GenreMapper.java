@@ -11,8 +11,6 @@ import org.mapstruct.factory.Mappers;
 public interface GenreMapper {
     GenreMapper INSTANCE = Mappers.getMapper(GenreMapper.class);
 
-    @Mapping(target = "genreId", ignore = true)
     Genre toEntity(GenreRequest requestDTO);
-
     GenreResponse toResponseDTO(Genre entity);
 }
